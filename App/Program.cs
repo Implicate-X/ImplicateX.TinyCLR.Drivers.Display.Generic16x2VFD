@@ -32,7 +32,7 @@ internal class Program
 
 		Debug.WriteLine( "VFD scrolling start" );
 
-		vfd.SetLines( "Radio 2 98.9 MHz", "Program for you and me" );
+		vfd.SetLines( "Radio 2 98.9 MHz", "Broadcast for you and me" );
 		vfd.SetScrollDelay( 200 );
 
 		Thread vfdThread = new( () => vfd.Run() );
