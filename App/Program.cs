@@ -15,8 +15,8 @@ internal class Program
 		public const int VFDClock = FEZFeather.GpioPin.PD3;
 	}
 
-	private static GpioController gpioController;
-	private static Generic16x2VFD vfd;
+	private static GpioController gpioController = null!;
+	private static Generic16x2VFD vfd = null!;
 
 	static void Main()
 	{

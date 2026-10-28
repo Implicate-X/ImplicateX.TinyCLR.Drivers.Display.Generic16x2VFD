@@ -8,11 +8,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{6898551B-EE98-4F02-B3E7-19407BC4E4DA}</ProjectGuid>
+    <ProjectGuid>{7861AE81-0D37-BBDA-7A2A-3706FA48469E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ImplicateX.TinyCLR.Drivers.Decoder</RootNamespace>
-    <AssemblyName>ImplicateX.TinyCLR.Drivers.Decoder.Ls7366</AssemblyName>
+    <RootNamespace>ImplicateX.TinyCLR.Drivers.Display</RootNamespace>
+    <AssemblyName>ImplicateX.TinyCLR.Drivers.Display.Generic16x2VFD</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A1948822-69DD-4150-919B-F3F42EFB71CC};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>

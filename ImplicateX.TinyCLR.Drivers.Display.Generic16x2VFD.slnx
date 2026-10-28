@@ -1,7 +1,7 @@
 <Solution>
   <Folder Name="/docs/">
   </Folder>
-  <Project Path="ImplicateX.TinyCLR.Drivers.Display.Generic16x2VFD.csproj" Id="6898551b-ee98-4f02-b3e7-19407bc4e4da" />
+  <Project Path="ImplicateX.TinyCLR.Drivers.Display.Generic16x2VFD.csproj" Id="7861ae81-0d37-bbda-7a2a-3706fa48469e" />
   <Project Path="App/ImplicateX.TinyCLR.Drivers.Display.Generic16x2VFD.App.csproj" Id="e65ce240-c284-4d34-b83a-b1ca2bedf2b0">
     <Deploy />
   </Project>

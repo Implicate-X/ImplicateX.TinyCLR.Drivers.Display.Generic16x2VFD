@@ -64,6 +64,10 @@
       <Project>{6898551B-EE98-4F02-B3E7-19407BC4E4DA}</Project>
       <Name>ImplicateX.TinyCLR.Drivers.Decoder.Ls7366</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ImplicateX.TinyCLR.Drivers.Display.Generic16x2VFD.csproj">
+      <Project>{7861AE81-0D37-BBDA-7A2A-3706FA48469E}</Project>
+      <Name>ImplicateX.TinyCLR.Drivers.Display.Generic16x2VFD</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
