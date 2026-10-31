@@ -275,7 +275,7 @@ namespace ImplicateX.TinyCLR.Drivers.Display
 
 			if( text.Length <= LineLength )
 			{
-				return Text.Reverse( Text.PadRight( text, LineLength ) );
+				return StringExtensions.Reverse( StringExtensions.PadRight( text, LineLength ) );
 			}
 
 			var source = scrollPadding + text + scrollPadding;
@@ -287,7 +287,7 @@ namespace ImplicateX.TinyCLR.Drivers.Display
 				result[ i ] = sourceIndex < source.Length ? source[ sourceIndex ] : ' ';
 			}
 
-			return Text.Reverse( new string( result ) );
+			return StringExtensions.Reverse( new string( result ) );
 		}
 
 		/// <summary>

@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace ImplicateX.TinyCLR
 {
-	public static class Text
+	public static class StringExtensions
 	{
 		public static string Reverse( string text )
 		{

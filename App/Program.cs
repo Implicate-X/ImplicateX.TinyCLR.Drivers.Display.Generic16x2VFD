@@ -30,14 +30,29 @@ internal class Program
 			vfdCSPinId: ControllerPin.VFDCS,
 			vfResetPinId: ControllerPin.VFReset );
 
-		Debug.WriteLine( "VFD scrolling start" );
-
 		vfd.SetLines( "Radio 2 98.9 MHz", "Broadcast for you and me" );
 		vfd.SetScrollDelay( 200 );
+
+		Debug.WriteLine( "VFD scrolling start" );
+
+		string line2 = string.Empty;
+		// 136 - 141 Level 0 bis 5
+		// 30 = Pfeil nach oben, 31 = Pfeil nach unten
+		// 126 = Pfeil nach rechts, 127 = Pfeil nach links
+		// 128 = Einzelblockpfeil nach oben, 129 = Doppelblockpfeil nach oben
+		// 144 = Einzelblockpfeil nach unten, 145 = Doppelblockpfeil nach unten
+
+		for( int i = 136; i <= 141; i++ )
+		{
+			line2 += ( char )i;
+		}
+		vfd.SetLine2( line2 );
 
 		Thread vfdThread = new( () => vfd.Run() );
 
 		vfdThread.Start();
+
+
 		#endregion
 	}
 }
