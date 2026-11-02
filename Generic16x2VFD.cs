@@ -6,13 +6,127 @@ using GHIElectronics.TinyCLR.Devices.Gpio;
 namespace ImplicateX.TinyCLR.Drivers.Display
 {
 	/// <summary>
+	/// Represents an integer value constrained by inclusive minimum and maximum bounds.
+	/// </summary>
+	public interface IRangedValue
+	{
+		/// <summary>
+		/// Gets or sets the current value within the configured range.
+		/// </summary>
+		int Value { get; set; }
+
+		/// <summary>
+		/// Gets or sets the inclusive lower bound for <see cref="Value" />.
+		/// </summary>
+		int Minimum { get; set; }
+
+		/// <summary>
+		/// Gets or sets the inclusive upper bound for <see cref="Value" />.
+		/// </summary>
+		int Maximum { get; set; }
+	}
+
+	/// <summary>
+	/// Implements an integer value constrained to an inclusive range, with optional wrap-around behavior.
+	/// </summary>
+	/// <remarks>
+	/// When <c>stopLimit</c> is <see langword="true"/>, values outside the range clamp to the nearest bound.
+	/// When <c>stopLimit</c> is <see langword="false"/>, values outside the range wrap to the opposite bound.
+	/// </remarks>
+	internal sealed class RangedValue : IRangedValue
+	{
+		private int value;
+
+		private int minimum;
+
+		private int maximum;
+
+		private readonly Action<int> Changed;
+
+		private readonly bool stopLimit;
+
+		/// <summary>
+		/// Gets or sets the inclusive lower bound for <see cref="Value"/>.
+		/// </summary>
+		public int Minimum
+		{
+			get => minimum;
+			set => minimum = value;
+		}
+
+		/// <summary>
+		/// Gets or sets the inclusive upper bound for <see cref="Value"/>.
+		/// </summary>
+		public int Maximum
+		{
+			get => maximum;
+			set => maximum = value;
+		}
+
+		/// <summary>
+		/// Gets or sets the current value after applying range enforcement.
+		/// </summary>
+		/// <remarks>
+		/// Setting this property always applies <see cref="Clamp(int)"/> and then invokes the change callback, if provided.
+		/// </remarks>
+		public int Value
+		{
+			get => value;
+			set
+			{
+				this.value = Clamp( value );
+
+				this.Changed?.Invoke( this.value );
+			}
+		}
+
+		/// <summary>
+		/// Initializes a new ranged value container with bounds, initial value, and optional change callback.
+		/// </summary>
+		/// <param name="minimum">Inclusive lower bound.</param>
+		/// <param name="maximum">Inclusive upper bound.</param>
+		/// <param name="value">Initial value to assign.</param>
+		/// <param name="changed">Optional callback invoked after each value assignment.</param>
+		/// <param name="stopLimit">
+		/// <see langword="true"/> to clamp at limits; <see langword="false"/> to wrap to the opposite limit.
+		/// </param>
+		public RangedValue( int minimum, int maximum, int value, Action<int> changed = null, bool stopLimit = false )
+		{
+			Minimum = minimum;
+			Maximum = maximum;
+
+			Value = value;
+			Changed = changed;
+			this.stopLimit = stopLimit;
+		}
+
+		/// <summary>
+		/// Enforces range behavior for a candidate value.
+		/// </summary>
+		/// <param name="value">Value to normalize into the configured range behavior.</param>
+		/// <returns>
+		/// A value within <see cref="Minimum"/> and <see cref="Maximum"/>, either clamped or wrapped depending on <c>stopLimit</c>.
+		/// </returns>
+		private int Clamp( int value )
+		{
+			if( value.CompareTo( minimum ) < 0 )
+				return ( stopLimit ? minimum : maximum );
+
+			if( value.CompareTo( maximum ) > 0 )
+				return ( stopLimit ? maximum : minimum );
+
+			return value;
+		}
+	}
+
+	/// <summary>
 	/// Provides low-level control of a two-line vacuum fluorescent display (VFD) over GPIO using manual clock, data,
 	/// chip-select, and reset signaling, including automatic horizontal scrolling for text longer than the display width.
 	/// </summary>
 	/// <remarks>Maintains thread-safe line content and scroll state, transmits display frames continuously in
 	/// <c>Run()</c>, and applies a minimum scroll delay of 20 ms. The update loop is long-running and intended to execute
 	/// on a dedicated background thread.</remarks>
-	public class Generic16x2VFD
+	public class Generic16x2VFD// : IRangeable
 	{
 		private readonly GpioPin vfdClockPin;
 		private readonly GpioPin vfdDataPin;
@@ -27,8 +141,9 @@ namespace ImplicateX.TinyCLR.Drivers.Display
 		private long line1Revision;
 		private long line2Revision;
 		private int scrollDelayMs = 200;
-		private readonly object syncRoot = new object();
+		private readonly object syncRoot = new();
 
+		public IRangedValue Brightness { get; }
 		/// <summary>
 		/// Initializes a new instance of the GenericVFD class, configures the VFD control pins as outputs, sets initial pin
 		/// states, and performs a hardware reset sequence.
@@ -61,6 +176,13 @@ namespace ImplicateX.TinyCLR.Drivers.Display
 			vfResetPin.Write( GpioPinValue.Low );
 			Thread.Sleep( 100 );
 			vfResetPin.Write( GpioPinValue.High );
+
+			Brightness = new RangedValue( 0x10, 0xF0, 0x80, OnChangedBrightness );
+		}
+
+		public void OnChangedBrightness( int value )
+		{
+			SendFrame( line1Text, line2Text, line1ScrollOffset, line2ScrollOffset );
 		}
 
 		/// <summary>
@@ -231,7 +353,7 @@ namespace ImplicateX.TinyCLR.Drivers.Display
 		/// <param name="offset2">Horizontal offset applied when composing the second line window.</param>
 		private void SendFrame( string line1, string line2, int offset1, int offset2 )
 		{
-			SendWindow( [0x50, 0x80] );
+			SendWindow( [ 0x50, (byte)Brightness.Value ] );
 			SendWindow( ComposeLineWindow( 0x10, line1, offset1 ) );
 			SendWindow( ComposeLineWindow( 0x90, line2, offset2 ) );
 			SendWindow( [0x70] );
@@ -248,6 +370,7 @@ namespace ImplicateX.TinyCLR.Drivers.Display
 		/// bytes.</returns>
 		private byte[] ComposeLineWindow( byte address, string text, int offset )
 		{
+Debug.WriteLine(text );
 			var bytes = new byte[ 1 + LineLength ];
 			bytes[ 0 ] = address;
 
@@ -255,10 +378,25 @@ namespace ImplicateX.TinyCLR.Drivers.Display
 
 			for( var i = 0; i < LineLength; i++ )
 			{
-				bytes[ i + 1 ] = ( byte )window[ i ];
+				bytes[ i + 1 ] = EncodeVfdChar( window[ i ] );
 			}
 
 			return bytes;
+		}
+
+		private static byte EncodeVfdChar( char value )
+		{
+			switch( value )
+			{
+				case 'Ä': return 0xE0;
+				case 'Ö': return 0x5C;
+				case 'Ü': return 0x5D;
+				case 'ä': return 0xE0;
+				case 'ö': return 0x7C;
+				case 'ü': return 0x7D;
+				case 'ß': return 0x7E;
+				default: return ( byte )value;
+			}
 		}
 
 		/// <summary>

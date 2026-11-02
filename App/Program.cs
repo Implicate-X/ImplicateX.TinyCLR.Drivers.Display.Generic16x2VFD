@@ -52,7 +52,7 @@ internal class Program
 
 		vfdThread.Start();
 
-
+		vfd.Dimming.Value = 0x80;
 		#endregion
 	}
 }
