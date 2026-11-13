@@ -370,7 +370,6 @@ namespace ImplicateX.TinyCLR.Drivers.Display
 		/// bytes.</returns>
 		private byte[] ComposeLineWindow( byte address, string text, int offset )
 		{
-Debug.WriteLine(text );
 			var bytes = new byte[ 1 + LineLength ];
 			bytes[ 0 ] = address;
 
