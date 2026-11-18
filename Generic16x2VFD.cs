@@ -353,10 +353,10 @@ namespace ImplicateX.TinyCLR.Drivers.Display
 		/// <param name="offset2">Horizontal offset applied when composing the second line window.</param>
 		private void SendFrame( string line1, string line2, int offset1, int offset2 )
 		{
-			SendWindow( [ 0x50, (byte)Brightness.Value ] );
+			SendWindow( new byte[] { 0x50, (byte)Brightness.Value } );
 			SendWindow( ComposeLineWindow( 0x10, line1, offset1 ) );
 			SendWindow( ComposeLineWindow( 0x90, line2, offset2 ) );
-			SendWindow( [0x70] );
+			SendWindow( new byte[] { 0x70 } );
 		}
 
 		/// <summary>

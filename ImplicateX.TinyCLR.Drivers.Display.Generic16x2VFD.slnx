@@ -2,8 +2,11 @@
   <Folder Name="/docs/">
     <File Path="README.md" />
   </Folder>
-  <Project Path="ImplicateX.TinyCLR.Drivers.Display.Generic16x2VFD.csproj" Id="7861ae81-0d37-bbda-7a2a-3706fa48469e" />
+  <Folder Name="/GHI/">
+    <Project Path="../../../Libraries/GHIElectronics.TinyCLR.Pins/GHIElectronics.TinyCLR.Pins.csproj" Id="2dceef58-5455-457c-b968-52d791605d07" />
+  </Folder>
   <Project Path="App/ImplicateX.TinyCLR.Drivers.Display.Generic16x2VFD.App.csproj" Id="e65ce240-c284-4d34-b83a-b1ca2bedf2b0">
     <Deploy />
   </Project>
+  <Project Path="ImplicateX.TinyCLR.Drivers.Display.Generic16x2VFD.csproj" Id="7861ae81-0d37-bbda-7a2a-3706fa48469e" />
 </Solution>
