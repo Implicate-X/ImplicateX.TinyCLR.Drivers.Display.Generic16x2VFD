@@ -90,7 +90,7 @@ namespace ImplicateX.TinyCLR.Drivers.Display
 		/// <param name="stopLimit">
 		/// <see langword="true"/> to clamp at limits; <see langword="false"/> to wrap to the opposite limit.
 		/// </param>
-		public RangedValue( int minimum, int maximum, int value, Action<int> changed = null, bool stopLimit = false )
+		public RangedValue( int minimum, int maximum, int value, Action<int> changed = null!, bool stopLimit = false )
 		{
 			Minimum = minimum;
 			Maximum = maximum;
